@@ -1,0 +1,15 @@
+{
+  "name": "pdf-digital-signature",
+  "version": "1.0.0",
+  "description": "",
+  "main": "application.js",
+  "dependencies": {
+    "cron": "^1.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mifort solutions",
+  "license": "ISC"
+}
