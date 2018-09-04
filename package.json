@@ -1,15 +1,24 @@
 {
-  "name": "pdf-digital-signature",
+  "name": "sign-pdf",
   "version": "1.0.0",
-  "description": "",
   "main": "application.js",
   "dependencies": {
-    "cron": "^1.4.1"
+    "cron": "^1.4.1",
+    "phantom": "^6.0.3"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mifort solutions",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alekssakovsky/pdf-digital-signature.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alekssakovsky/pdf-digital-signature/issues"
+  },
+  "homepage": "https://github.com/alekssakovsky/pdf-digital-signature#readme",
+  "description": ""
 }
