@@ -11,7 +11,7 @@ function renderGoogle() {
     .then((ph) => {
       ph.createPage()
         .then((page) => {
-          page.open("http://www.google.com")
+          page.open('https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=Arnold')
             .then((status) => {
               page.render('google.pdf')
                 .then(() => {
