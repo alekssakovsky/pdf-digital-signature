@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "application.js",
   "dependencies": {
-    "casper-nodejs": "^1.0.0",
+    "casper": "^0.1.1",
+    "casperjs": "^1.1.4",
     "cron": "^1.4.1",
     "mysql": "^2.16.0",
-    "phantom": "^6.0.3",
-    "phantomjs": "^2.1.7"
+    "phantom": "^6.0.3"
   },
   "devDependencies": {},
   "scripts": {
