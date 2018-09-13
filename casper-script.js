@@ -5,7 +5,7 @@ var casper = require('casper').create({
 
 casper.options.retryTimeout = 5000;
 
-// var url = 'https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=Arnold';
+
 
 var url = require('utils').format(casper.cli.args);
 
@@ -27,7 +27,6 @@ for (var i = 1; i < 4; i++) {
   function promiseCall(count) {
     casper.then(function () {
       casper.capture('arnold ' + count + '.pdf');
-      casper.echo('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!         capturing       ' + count + '                       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     });
   }
 
