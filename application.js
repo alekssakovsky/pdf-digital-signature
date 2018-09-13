@@ -11,7 +11,7 @@ new CronJob('0-59 * * * *', () => {
 
   db.dbConnect(SELECT_ALL_CUSTOMERS)
     .then((results) => {
-      results.forEach((result) =>{
+      results.forEach((result) => {
         savePDFs(result.v_site, result.customerN);
       });
 
@@ -21,6 +21,6 @@ new CronJob('0-59 * * * *', () => {
 function savePDFs(url, customer) {
   const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
   exec(cmd, function (error, stdout, stderr) {
-          console.log('RUNNING:\n', stdout);
+    console.log('RUNNING:\n', stdout);
   });
 }
