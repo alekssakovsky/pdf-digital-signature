@@ -22,16 +22,22 @@ casper.page.paperSize = {
   border: '0.4in'
 };
 
-for (var i = 1; i < 4; i++) {
+for (var index = 1; index < 4; index++) {
   function promiseCall(count) {
     casper.then(function () {
       casper.capture(customer + ' ' + count + '.pdf');
     });
   }
 
-  promiseCall(i);
+  promiseCall(index);
   casper.then(function () {
-    this.click('#pagnNextString');
+    casper.evaluate(function() {
+      // document.querySelector('#pagnNextString', '100%', '100%').click();
+      document.querySelector('#pagnNextString', '0', '0').click();
+    });
+    // this.click("#pnnext a");
+    // document.querySelector('#pnnext').click();
+    // this.click('#pagnNextString');
   });
 }
 casper.run();
