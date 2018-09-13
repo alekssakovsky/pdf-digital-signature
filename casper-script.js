@@ -1,19 +1,18 @@
 var casper = require('casper').create({
   verbose: true,
-  logLevel: "debug"
+  logLevel: 'info'
 });
 
 casper.options.retryTimeout = 5000;
 
 
-
-var url = require('utils').format(casper.cli.args);
+var customer = require('utils').format(casper.cli.args[1]);
+var url = require('utils').format(casper.cli.args[0]) + customer;
 
 casper.on('error', function (err) {
   this.log(err, 'error');
   this.exit(1);
 });
-
 casper.start(url);
 
 casper.page.paperSize = {
@@ -26,7 +25,7 @@ casper.page.paperSize = {
 for (var i = 1; i < 4; i++) {
   function promiseCall(count) {
     casper.then(function () {
-      casper.capture('arnold ' + count + '.pdf');
+      casper.capture(customer + ' ' + count + '.pdf');
     });
   }
 
