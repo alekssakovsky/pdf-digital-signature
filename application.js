@@ -11,7 +11,10 @@ new CronJob('0-59 * * * *', () => {
 
   db.dbConnect(SELECT_ALL_CUSTOMERS)
     .then((results) => {
-      savePDFs(results[0].v_site, results[0].customerN);
+      results.forEach((result) =>{
+        savePDFs(result.v_site, result.customerN);
+      });
+
     });
 }, null, true);
 
