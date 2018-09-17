@@ -25,7 +25,7 @@ casper.page.paperSize = {
 for (var index = 1; index < 4; index++) {
   function promiseCall(count) {
     casper.then(function () {
-      casper.capture(customer + ' ' + count + '.pdf');
+      casper.capture('./temp/' + customer + ' ' + count + '.pdf');
     });
   }
 

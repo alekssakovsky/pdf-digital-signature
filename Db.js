@@ -1,6 +1,5 @@
 'use strict';
 const SELECT_ALL_CUSTOMERS = 'SELECT * FROM customers JOIN vendors;';
-
 const mysql = require('mysql');
 const dbConfig = require('./config/db-data');
 
@@ -11,7 +10,6 @@ function dbConnect(query) {
     connection.connect();
     connection.query(query, function (err, result) {
       if (err) reject(err);
-
       resolve(result);
       connection.end();
     });

@@ -1,0 +1,8 @@
+{
+  "PATH_TO_CERTIFICATE_AND_PASSWORD": "certificates",
+  "P12_CERTIFICATE": "server.p12",
+  "PASSWORD_FILE": "pwd.pwd",
+  "PATH_TO_TEMPS_PDFs": "temp",
+  "PATH_TO_SIGNED_PDF": "Signed Files"
+}
+
