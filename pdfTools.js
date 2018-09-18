@@ -104,7 +104,6 @@ function signPDF(sourceFile) {
 }
 
 /**
- *
  * @param url
  * @param customer
  * @return {Promise<string>}
@@ -130,7 +129,7 @@ function makePDF(url, customer) {
 
 module.exports.makePDF = makePDF;
 
-makePDF('https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=', 'Arnold')
-  .then(signedFile => console.log('THEN', signedFile))
-  .catch(error => console.log('CATCH', error));
+// makePDF('https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=', 'Arnold')
+//   .then(signedFile => console.log('THEN', signedFile))
+//   .catch(error => console.log('CATCH', error));
 

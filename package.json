@@ -4,15 +4,9 @@
   "main": "application.js",
   "dependencies": {
     "async": "^2.6.1",
-    "casper": "^0.1.1",
-    "casperjs": "^1.1.4",
     "cron": "^1.4.1",
     "easy-pdf-merge": "^0.2.0",
-    "mysql": "^2.16.0",
-    "node-forge": "^0.7.6",
-    "node-signpdf": "^0.1.0",
-    "phantom": "^6.0.3",
-    "phantomjs": "^2.1.7"
+    "mysql": "^2.16.0"
   },
   "devDependencies": {},
   "scripts": {
