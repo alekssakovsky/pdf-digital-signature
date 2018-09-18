@@ -117,7 +117,7 @@ function makePDF(url, customer) {
           savePDFs(url, customer)
             .then((savedFile) => {
               signPDF(savedFile)
-                .then(signedFile => resolve(signedFile))
+                .then(signedFile => resolve(`PDF file ${signedFile} is done`))
                 .catch(error => reject(error));
             })
             .catch((error) => reject(error));
