@@ -6,7 +6,8 @@
     "async": "^2.6.1",
     "cron": "^1.4.1",
     "easy-pdf-merge": "^0.2.0",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "nodemailer": "^4.6.8"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,0 +1,18 @@
+{
+  "mail":
+  {
+    "service": "gmail",
+    "auth":
+    {
+      "user": "@gmail.com",
+      "pass": "******"
+    }
+  },
+  "mailOptions":
+  {
+    "from": "@gmail.com",
+    "to": "@gmail.com",
+    "subject": "Sending Email using Node.js",
+    "text": "That was easy!"
+  }
+}
