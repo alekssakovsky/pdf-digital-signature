@@ -14,8 +14,8 @@ const fs = require('fs');
  * Uploads this file to Google Drive. Adds permissions "for all",
  * sends an email to a link to the file.
  */
-// new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
-/*  db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
+new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
+  db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
     .then((results) => {
       let promises = [];
       results.forEach((result) => {
@@ -36,7 +36,6 @@ const fs = require('fs');
                     });
                     googleDrive.grantWriteSheetFilePermission(fileId)
                       .then((linkFile) => {
-                        console.log(linkFile);
                         sendMail(linkFile)
                           .then(() => console.log('success'))
                           .catch(error => console.error(error));
@@ -52,14 +51,13 @@ const fs = require('fs');
     })
     .catch(error => console.log(error));
 
-// }, null, true);
+}, null, true);
 
 /**
  * Zeroes counter in the database.
  */
 function zeroingHistory() {
-  db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, 1)
+  db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, 0)
     .then(() => console.log('history updated'))
     .catch(error => console.error(error));
 }
-zeroingHistory();

@@ -15,7 +15,6 @@ const SENDER_CONFIG = require('./config/email');
  */
 function sendMail(message) {
   SENDER_CONFIG.mailOptions.text = message;
-  console.log(SENDER_CONFIG);
   const transporter = mailer.createTransport(SENDER_CONFIG.mail);
 
   return new Promise((resolve, reject) => {
