@@ -79,7 +79,7 @@ function checkFilesAndDirectories() {
         const errStr = `Warning! I can\'t create \`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}\n${error}`;
         reject(errStr);
       });
-      Ъ
+    }
     resolve('0'); //TODO убрать 0
   });
 }
