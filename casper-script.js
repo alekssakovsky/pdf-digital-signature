@@ -32,12 +32,8 @@ for (var index = 1; index < 4; index++) {
   promiseCall(index);
   casper.then(function () {
     casper.evaluate(function() {
-      // document.querySelector('#pagnNextString', '100%', '100%').click();
       document.querySelector('#pagnNextString', '0', '0').click();
     });
-    // this.click("#pnnext a");
-    // document.querySelector('#pnnext').click();
-    // this.click('#pagnNextString');
   });
 }
 casper.run();

@@ -6,15 +6,21 @@ const exec = require('child_process').exec;
 const CONFIG = require('./config/PDF-sign');
 
 /**
- * function make merging source files in 1 file and deleting source files
- * @param url
- * @param customer
+ * Makes merging source files in 1 file and deleting source files.
+ *
+ * @param {string} url
+ * @param {string} customer
+ *
  * @return {Promise<string>}
+ * a promise that returns full file name if resolved
+ * a promise that returns error if rejected
+ * @resolve {string} fileNameForSave
+ * @reject {string} errorStr
  */
 function savePDFs(url, customer) {
   return new Promise((resolve, reject) => {
     const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
-    exec(cmd, (err, stdout, stderr) => {
+    exec(cmd, (error, stdout, stderr) => {
       if (
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 1.pdf`) &&
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 2.pdf`) &&
@@ -29,9 +35,9 @@ function savePDFs(url, customer) {
           files.push(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} ${index}.pdf`);
         }
         const fileNameForSave = `${customer}.pdf`;
-        merge(files, `./${CONFIG.PATH_TO_TEMPS_PDFs}/${fileNameForSave}`, (err) => {
-          if (err) {
-            const errorStr = `I can\'t merging files: ${err}`;
+        merge(files, `./${CONFIG.PATH_TO_TEMPS_PDFs}/${fileNameForSave}`, (error) => {
+          if (error) {
+            const errorStr = `I can\'t merging files: ${error}`;
             reject(errorStr);
           } else {
             resolve(fileNameForSave);
@@ -44,10 +50,15 @@ function savePDFs(url, customer) {
 }
 
 /**
- * function checks exists files certificate and password file
+ * Checks exists files certificate and password file
  * also it checks exists directories TEMP and Signed
- * if it's doesn't exists function try it create
+ * if it's doesn't exists function try it create.
+ *
  * @return {Promise<string>}
+ * a promise that returns error code '0' if resolved
+ * a promise that returns error if rejected
+ * @resolve {string}
+ * @reject {string} errorStr
  */
 function checkFilesAndDirectories() {
   return new Promise((resolve, reject) => {
@@ -58,25 +69,35 @@ function checkFilesAndDirectories() {
       reject(errStr);
     }
     if (!fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}`)) {
-      fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}`, (err) => {
-        const errStr = `Warning! I can\'t create ${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}\n${err}`;
+      fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}`, (error) => {
+        const errStr = `Warning! I can\'t create ${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}\n${error}`;
         reject(errStr);
       });
     }
     if (!fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}`)) {
-      fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}`, (err) => {
-        const errStr = `Warning! I can\'t create \`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}\n${err}`;
+      fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}`, (error) => {
+        const errStr = `Warning! I can\'t create \`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}\n${error}`;
         reject(errStr);
       });
-    }
-    resolve('0');
+      Ъ
+    resolve('0'); //TODO убрать 0
   });
 }
 
 /**
- * function make a PDF file is signed
- * @param sourceFile
- * @return {Promise<string>}
+ * Adds an electronic digital signature to the file.
+ *
+ * @param {string} sourceFile
+ *
+ * @return {Promise}
+ * a promise that returns object with path an fileName if resolved
+ * a promise that returns error if rejected
+ * @resolve {object}
+ * @typedef {Object}
+ * @property {string} pathFile
+ * @property {string} fileName
+ * @reject {string} error
+
  */
 function signPDF(sourceFile) {
   return new Promise((resolve, reject) => {
@@ -85,12 +106,15 @@ function signPDF(sourceFile) {
     -pwdfile "${CONFIG.PATH_TO_CERTIFICATE_AND_PASSWORD}\\${CONFIG.PASSWORD_FILE}" \
     -t "${CONFIG.PATH_TO_TEMPS_PDFs}\\${sourceFile}" -o "${CONFIG.PATH_TO_SIGNED_PDF}\\${sourceFile}"`;
 
-    exec(cmd, (err, stdout, stderr) => {
+    exec(cmd, (error, stdout, stderr) => {
       if (fs.existsSync(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile}`)) {
         console.log('signing PDF file is done');
-        resolve(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile}`);
-        fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`, (err) => {
-          if (err) {
+        resolve({
+          pathFile: `./${CONFIG.PATH_TO_SIGNED_PDF}/`,
+          fileName: sourceFile
+      });
+        fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`, (error) => {
+          if (error) {
             console.error(`I cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`);
           }
         });
@@ -104,9 +128,22 @@ function signPDF(sourceFile) {
 }
 
 /**
- * @param url
- * @param customer
- * @return {Promise<string>}
+ * function - aggregator for:
+ * checkFilesAndDirectories,
+ * savePDFs,
+ * signPDF.
+ *
+ * @param {string} url
+ * @param {string} customer
+ *
+ * @return {Promise}
+ * a promise that returns object fileDefinition if resolved
+ * a promise that returns error if rejected
+ * @resolve {object} fileDefinition
+ * @typedef {Object} fileDefinition
+ * @property {string} fileDefinition.pathFile
+ * @property {string} fileDefinition.fileName
+ * @reject {string} error
  */
 function makePDF(url, customer) {
   return new Promise((resolve, reject) => {
@@ -117,7 +154,7 @@ function makePDF(url, customer) {
           savePDFs(url, customer)
             .then((savedFile) => {
               signPDF(savedFile)
-                .then(signedFile => resolve(`PDF file ${signedFile} is done`))
+                .then(fileDefinition => resolve(fileDefinition))
                 .catch(error => reject(error));
             })
             .catch((error) => reject(error));
@@ -126,10 +163,4 @@ function makePDF(url, customer) {
   });
 }
 
-
 module.exports.makePDF = makePDF;
-
-// makePDF('https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=', 'Arnold')
-//   .then(signedFile => console.log('THEN', signedFile))
-//   .catch(error => console.log('CATCH', error));
-

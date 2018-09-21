@@ -9,6 +9,8 @@ const TOKEN = './config/token.json';
 
 
 /**
+ * Needs for for uploads file on Google Drive.
+ *
  * @class
  */
 class GoogleDrive {
@@ -27,6 +29,9 @@ class GoogleDrive {
   }
 
   /**
+   * Reads file credentials.
+   *
+   * @return {Credentials}
    * @typedef {Object} Credentials
    * @property {string} client_id
    * @property {string} project_id
@@ -35,19 +40,24 @@ class GoogleDrive {
    * @property {string} auth_provider_x509_cert_url
    * @property {string} client_secret
    * @property {[]} redirect_uris@param
-   *
-   * @return {Credentials}
    */
   static readSecretFile() {
     try {
       return require(CREDENTIALS);
-    } catch (err) {
-      console.error('Error loading secret file: ', err);
+    } catch (error) {
+      console.error('Error loading secret file: ', error);
     }
   }
 
   /**
+   * Checks token.
+   * If token no valid return function getNewToken.
+   *
+   * @return {getNewToken}
+   * @property {function}
    * @return {Promise}
+   * @resolved
+   * @property resolve
    */
   getToken() {
     if (fs.existsSync(TOKEN) && fs.statSync(TOKEN).size > 0) {
@@ -61,14 +71,25 @@ class GoogleDrive {
   }
 
   /**
+   * Goes on Google is authorized by method auth2
+   * and write file token.json.
+   *
    * @typedef {Object} token
-   * @property {(string)} access_token
-   * @property {(string)} refresh_token
-   * @property {(string)} scope
-   * @property {(string)} token_type
-   * @property {(number)} expiry_date
+   * @property {string} access_token
+   * @property {string} refresh_token
+   * @property {string} scope
+   * @property {string} token_type
+   * @property {number} expiry_date
    *
    * @return {Promise<Credentials>}
+   * @typedef {Object} Credentials
+   * @property {string} client_id
+   * @property {string} project_id
+   * @property {string} auth_uri
+   * @property {string} token_uri
+   * @property {string} auth_provider_x509_cert_url
+   * @property {string} client_secret
+   * @property {[]} redirect_uris@param
    */
   getNewToken() {
     const authUrl = this.oAuth2Client.generateAuthUrl({
@@ -85,47 +106,53 @@ class GoogleDrive {
     return new Promise((resolve) => {
       rl.question('Enter the code from that page here: ', (code) => {
         rl.close();
-        this.oAuth2Client.getToken(code, (err, token) => {
-          if (err) {
-            console.error(err);
+        this.oAuth2Client.getToken(code, (error, token) => {
+          if (error) {
+            console.error(error);
             return;
           }
 
           this.oAuth2Client.setCredentials(token);
           this.drive = google.drive({version: 'v3', auth: this.oAuth2Client});
           resolve(token);
-          fs.writeFile(TOKEN, JSON.stringify(token), (err) => {
-            console.log('Write file TOKEN: ', err || TOKEN);
+          fs.writeFile(TOKEN, JSON.stringify(token), (error) => {
+            console.log('Write file TOKEN: ', error || TOKEN);
           });
         });
       });
     });
   }
 
-
   /**
-   * @param {string} fileNamePdf
+   * Uploads file in Google Drive.
    *
-   * @return {Promise<string>}
+   * @param {object} fileDefinition
+   * @param {string} fileDefinition.pathFile
+   * @param {string} fileDefinition.fileName
+   *
+   * @return {Promise}
+   * a promise that returns file's id  if resolved
+   * a promise that returns error if rejected
+   * @resolve {string} response.data.id
+   * @reject {string} error
    */
-  insertPdfFile(fileNamePdf) {
+  insertPdfFile(fileDefinition) {
     return new Promise((resolve, reject) => {
-      let that = this;
       const fileMetadataPdf = {
-        'name': fileNamePdf,
+        'name': fileDefinition.fileName,
       };
 
       const mediaPdf = {
         mimeType: 'application/pdf',
-        body: fs.createReadStream(`./Signed Files/${fileNamePdf}`)
+        body: fs.createReadStream(`${fileDefinition.pathFile}${fileDefinition.fileName}`)
       };
       this.drive.files.create({
         resource: fileMetadataPdf,
         media: mediaPdf,
-      }, function (err, response) {
-        if (err) {
-          reject(err);
-          console.error(err);
+      }, function (error, response) {
+        if (error) {
+          reject(error);
+          console.error(error);
         }
         else {
           resolve(response.data.id);
@@ -134,9 +161,14 @@ class GoogleDrive {
     });
   }
 
-
   /**
-   * @param fileNameId
+   * Enables full access by reference {referenceFile}.
+   *
+   * @param {string} fileNameId
+   *
+   * @return {Promise}
+   * a promise that returns referenceFile - link if resolved
+   * @resolve {string} referenceFile
    */
   grantWriteSheetFilePermission(fileNameId) {
     let that = this;
@@ -147,38 +179,29 @@ class GoogleDrive {
       },
     ];
 
-    async.eachSeries(permissions, function (permission, permissionCallback) {
-      that.drive.permissions.create({
-        resource: permission,
-        fileId: fileNameId,
-      }, (err) => {
-        if (err) {
-          console.error(err);
-        } else {
-          const referenceFile = `https://docs.google.com/spreadsheets/d/${fileNameId}/edit?usp=sharing`;
-          console.log('All permissions inserted, the file is accessible by reference: ', referenceFile);
-          permissionCallback();
+    return new Promise ((resolve) => {
+      async.eachSeries(permissions, function (permission, permissionCallback) {
+        that.drive.permissions.create({
+          resource: permission,
+          fileId: fileNameId,
+        }, (error) => {
+          if (error) {
+            console.error(error);
+          } else {
+            const referenceFile = `https://docs.google.com/spreadsheets/d/${fileNameId}/edit?usp=sharing`;
+            permissionCallback();
+            resolve(referenceFile);
+
+          }
+        });
+      }, (error) => {
+        if (error) {
+          console.error(error);
         }
       });
-    }, function (err) {
-      if (err) {
-        console.error(err);
-      }
     });
+
   }
 }
 
-
 module.exports.GoogleDrive = GoogleDrive;
-
-
-
-let googleDrive = new GoogleDrive();
-
-googleDrive.getToken()
-  .then(() => {
-    googleDrive.insertPdfFile(`Arnold.pdf`)
-      .then((fileId) => {
-          googleDrive.grantWriteSheetFilePermission(fileId);
-    });
-  });
