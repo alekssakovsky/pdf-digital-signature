@@ -49,7 +49,7 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
         })
         .catch(error => console.error(error));
     })
-    .catch(error => console.log(error));
+    .catch(error => console.error(error));
 
 }, null, true);
 

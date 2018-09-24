@@ -141,7 +141,7 @@ class GoogleDrive {
       const fileMetadataPdf = {
         'name': fileDefinition.fileName,
       };
-
+console.log(`./temp/${fileDefinition.fileName}`);
       const mediaPdf = {
         mimeType: 'application/pdf',
         body: fs.createReadStream(`${fileDefinition.pathFile}${fileDefinition.fileName}`)

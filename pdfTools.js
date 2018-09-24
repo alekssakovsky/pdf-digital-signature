@@ -55,7 +55,7 @@ function savePDFs(url, customer) {
  * if it's doesn't exists function try it create.
  *
  * @return {Promise<string>}
- * a promise that returns error code '0' if resolved
+ * a promise that returns if resolved
  * a promise that returns error if rejected
  * @resolve {string}
  * @reject {string} errorStr
@@ -80,7 +80,7 @@ function checkFilesAndDirectories() {
         reject(errStr);
       });
     }
-    resolve('0'); //TODO убрать 0
+      resolve();
   });
 }
 
@@ -112,7 +112,7 @@ function signPDF(sourceFile) {
         resolve({
           pathFile: `./${CONFIG.PATH_TO_SIGNED_PDF}/`,
           fileName: sourceFile
-      });
+        });
         fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`, (error) => {
           if (error) {
             console.error(`I cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`);
@@ -149,16 +149,14 @@ function makePDF(url, customer) {
   return new Promise((resolve, reject) => {
     checkFilesAndDirectories()
       .catch((error) => reject(error))
-      .then((result) => {
-        if (result === '0') {
-          savePDFs(url, customer)
-            .then((savedFile) => {
-              signPDF(savedFile)
-                .then(fileDefinition => resolve(fileDefinition))
-                .catch(error => reject(error));
-            })
-            .catch((error) => reject(error));
-        }
+      .then(() => {
+        savePDFs(url, customer)
+          .then((savedFile) => {
+            signPDF(savedFile)
+              .then(fileDefinition => resolve(fileDefinition))
+              .catch(error => reject(error));
+          })
+          .catch((error) => reject(error));
       });
   });
 }

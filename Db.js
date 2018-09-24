@@ -25,7 +25,6 @@ function dbConnect(query, insert ='') {
     const connection = mysql.createConnection(dbConfig);
     connection.connect();
     connection.query(query, insert, function (error, result) {
-      console.log();
       if (error || result.length === 0) {
         reject(error || 'new data not found. Exit with code 0');
       }

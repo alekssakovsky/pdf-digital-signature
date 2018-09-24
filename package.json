@@ -4,6 +4,7 @@
   "main": "application.js",
   "dependencies": {
     "async": "^2.6.1",
+    "aws-sdk": "^2.320.0",
     "cron": "^1.4.1",
     "easy-pdf-merge": "^0.2.0",
     "googleapis": "^33.0.0",
