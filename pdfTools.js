@@ -11,13 +11,16 @@ const CONFIG = require('./config/PDF-sign');
  * @param {string} url
  * @param {string} customer
  *
- * @return {Promise<string>}
+ * @return {Promise}
  * a promise that returns full file name if resolved
  * a promise that returns error if rejected
- * @resolve {string} fileNameForSave
+ * @resolve {object}
+ * @typedef {object}
+ * @property {string} pathFile
+ * @property {string} fileName
  * @reject {string} errorStr
  */
-function savePDFs(url, customer) {
+function mergePDFs(url, customer) {
   return new Promise((resolve, reject) => {
     const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
     exec(cmd, (error, stdout, stderr) => {
@@ -40,7 +43,10 @@ function savePDFs(url, customer) {
             const errorStr = `I can\'t merging files: ${error}`;
             reject(errorStr);
           } else {
-            resolve(fileNameForSave);
+            resolve({
+              pathFile: `./${CONFIG.PATH_TO_SIGNED_PDF}/`,
+              fileName: fileNameForSave
+            });
           }
           async.each(files, fs.unlink);
         });
@@ -62,7 +68,7 @@ function savePDFs(url, customer) {
  */
 function checkFilesAndDirectories() {
   return new Promise((resolve, reject) => {
-    const entryPoint = './';//TODO maybe need a fast paths
+    const entryPoint = './';
     if (!fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_CERTIFICATE_AND_PASSWORD}/${CONFIG.P12_CERTIFICATE}`)
       && !fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_CERTIFICATE_AND_PASSWORD}/${CONFIG.PASSWORD_FILE}`)) {
       const errStr = 'Warning! Certificate or Password file doesn\'t exists';
@@ -87,35 +93,36 @@ function checkFilesAndDirectories() {
 /**
  * Adds an electronic digital signature to the file.
  *
- * @param {string} sourceFile
+ * @param {object} sourceFile
+ * @param {string} sourceFile.pathFile
+ * @param {string} sourceFile.fileName
  *
  * @return {Promise}
  * a promise that returns object with path an fileName if resolved
  * a promise that returns error if rejected
  * @resolve {object}
- * @typedef {Object}
+ * @typedef {object}
  * @property {string} pathFile
  * @property {string} fileName
  * @reject {string} error
-
  */
 function signPDF(sourceFile) {
   return new Promise((resolve, reject) => {
     const cmd = `java -jar signer\\PortableSigner.jar -n \
     -s "${CONFIG.PATH_TO_CERTIFICATE_AND_PASSWORD}\\${CONFIG.P12_CERTIFICATE}" \
     -pwdfile "${CONFIG.PATH_TO_CERTIFICATE_AND_PASSWORD}\\${CONFIG.PASSWORD_FILE}" \
-    -t "${CONFIG.PATH_TO_TEMPS_PDFs}\\${sourceFile}" -o "${CONFIG.PATH_TO_SIGNED_PDF}\\${sourceFile}"`;
+    -t "${CONFIG.PATH_TO_TEMPS_PDFs}\\${sourceFile.fileName}" -o "${CONFIG.PATH_TO_SIGNED_PDF}\\${sourceFile.fileName}"`;
 
     exec(cmd, (error, stdout, stderr) => {
-      if (fs.existsSync(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile}`)) {
+      if (fs.existsSync(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile.fileName}`)) {
         console.log('signing PDF file is done');
         resolve({
           pathFile: `./${CONFIG.PATH_TO_SIGNED_PDF}/`,
-          fileName: sourceFile
+          fileName: sourceFile.fileName
         });
-        fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`, (error) => {
+        fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile.fileName}`, (error) => {
           if (error) {
-            console.error(`I cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile}`);
+            console.error(`I cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile.fileName}`);
           }
         });
       }
@@ -150,7 +157,7 @@ function makePDF(url, customer) {
     checkFilesAndDirectories()
       .catch((error) => reject(error))
       .then(() => {
-        savePDFs(url, customer)
+        mergePDFs(url, customer)
           .then((savedFile) => {
             signPDF(savedFile)
               .then(fileDefinition => resolve(fileDefinition))

@@ -1,9 +1,9 @@
 {
-  "API_KEY": "2e90fe3e2f9d1aadcc773d0882c24adb-0e6e8cad-e845da62",
-  "DOMAIN": "www.open-corp.com",
-  "API_base_URL": "https://api.mailgun.net/v3/open-corp.com",
-  "SMTP_hostname":  "smtp.mailgun.org",
-  "SMTP_login": "postmaster@open-corp.com",
-  "TO": "almaguante@gmail.com, almaguante@mail.ru"
+  "API_KEY": "",
+  "DOMAIN": "",
+  "API_base_URL": "",
+  "SMTP_hostname":  "",
+  "SMTP_login": "",
+  "TO": ""
 
 }

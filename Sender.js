@@ -2,8 +2,8 @@
 
 const MAILGUN_CONFIG = require('./config/mailgun.json');
 const mailgun = require('mailgun-js')({
-  apiKey: "2e90fe3e2f9d1aadcc773d0882c24adb-0e6e8cad-e845da62",
-  domain: "open-corp.com",
+  apiKey: MAILGUN_CONFIG.API_KEY,
+  domain: MAILGUN_CONFIG.DOMAIN,
 });
 
 /**
@@ -40,7 +40,3 @@ function sendMail(message) {
 }
 
 module.exports.sendMail = sendMail;
-
-sendMail('Я Вам пишу, чего же боле?')
-  .then()
-  .catch((error));

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const AWS_CONFIG = require('./config/S3.json').client;
+const AWS_CONFIG = require('./config/S3.json');
 const s3 = new AWS.S3(AWS_CONFIG);
 
 /**
@@ -17,32 +17,29 @@ const s3 = new AWS.S3(AWS_CONFIG);
  * @reject {string} err
  */
 function uploadFile(fileDefinition) {
-
   return new Promise((resolve, reject) => {
-    const param = {
-      Bucket: AWS_CONFIG.bucketName,
-      ACL: 'public-read',
-      Key: fileDefinition.fileName,
-      ContentType: 'binary',
-      Body: fs.createReadStream(`${fileDefinition.pathFile}${fileDefinition.fileName}`)
-    };
-
-    s3.upload(param, function (err, data) {
-      if (err) {
-        reject(err)
-      }
-      resolve(data);
+  fs.readFile(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error, fileData) => {
+    if (error) {
+      const errorStr = `I can\'t upload file on S3 Service: ${error}`;
+      reject(errorStr);
+    }
+      const param = {
+        Bucket: AWS_CONFIG.bucketName,
+        ACL: 'public-read',
+        Key: fileDefinition.fileName,
+        ContentType: 'application/pdf',
+        Body: fileData
+      };
+      s3.upload(param, (error, data) => {
+        if (error) {
+          const errorStr = `I can\'t upload file on S3 Service: ${error}`;
+          reject(errorStr);
+        }
+        resolve(data.Location);
+      });
     });
   });
+
 }
-
-
-// uploadFile({
-//   pathFile: './',
-//   fileName: '111.md'
-// })
-//   .then(data => console.log(data))
-//   .catch(err => console.log(err));
-
 
 module.exports.uploadFile = uploadFile;

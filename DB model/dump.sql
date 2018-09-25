@@ -22,8 +22,8 @@ USE `PDFsign` ;
 -- Table `PDFsign`.`vendors`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PDFsign`.`vendors` (
-  `v_id` INT NOT NULL COMMENT 'id таблицы vendors',
-  `v_site` VARCHAR(255) NULL DEFAULT NULL COMMENT 'хранятся адреса сайтов',
+  `v_id` INT NOT NULL COMMENT 'id vendors table',
+  `v_site` VARCHAR(255) NULL DEFAULT NULL COMMENT 'for address',
   PRIMARY KEY (`v_id`),
   UNIQUE INDEX `idtable1_UNIQUE` (`v_id` ASC))
 ENGINE = InnoDB;
@@ -33,9 +33,9 @@ ENGINE = InnoDB;
 -- Table `PDFsign`.`customers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PDFsign`.`customers` (
-  `c_id` INT NOT NULL AUTO_INCREMENT COMMENT 'id таблицы customers',
-  `customerN` VARCHAR(45) NULL COMMENT 'номер или имя кастомера',
-  `c_vendor_id` INT NOT NULL COMMENT 'связь с id таблицы vendors',
+  `c_id` INT NOT NULL AUTO_INCREMENT COMMENT 'id customers table',
+  `customerN` VARCHAR(45) NULL COMMENT 'number or name customers',
+  `c_vendor_id` INT NOT NULL COMMENT 'relation with id vendors table',
   PRIMARY KEY (`c_id`),
   UNIQUE INDEX `c_id_UNIQUE` (`c_id` ASC),
   INDEX `v_id_idx` (`c_vendor_id` ASC),
@@ -51,8 +51,8 @@ ENGINE = InnoDB;
 -- Table `PDFsign`.`history`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PDFsign`.`history` (
-  `h_id` INT NOT NULL AUTO_INCREMENT COMMENT 'id таблицы history',
-  `h_customers_id` INT NULL COMMENT 'история последних запросов таблицы customers по id',
+  `h_id` INT NOT NULL AUTO_INCREMENT COMMENT 'id history table',
+  `h_customers_id` INT NULL COMMENT 'history of last requests customers id',
   PRIMARY KEY (`h_id`),
   UNIQUE INDEX `h_id_UNIQUE` (`h_id` ASC),
   UNIQUE INDEX `h_customers_id_UNIQUE` (`h_customers_id` ASC))

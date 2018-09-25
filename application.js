@@ -3,7 +3,7 @@ const CronJob = require('cron').CronJob;
 const makePDF = require('./pdfTools').makePDF;
 const db = require('./Db');
 const CRON_CONFIG = require('./config/cron.json');
-const GoogleDrive = require('./GoogleDrive').GoogleDrive;
+const uploadFile = require('./S3-service').uploadFile;
 const sendMail = require('./Sender').sendMail;
 const fs = require('fs');
 
@@ -15,43 +15,47 @@ const fs = require('fs');
  * sends an email to a link to the file.
  */
 new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
+  let idCustomer;
   db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
     .then((results) => {
+      idCustomer = results[0].c_id;
       let promises = [];
       results.forEach((result) => {
         promises.push(makePDF(result.v_site, result.customerN));
       });
-      Promise.all(promises)
-        .then((filesDefinition) => {
-          filesDefinition.forEach((fileDefinition) => {
-            const googleDrive = new GoogleDrive();
-            googleDrive.getToken()
-              .then(() => {
-                googleDrive.insertPdfFile(fileDefinition)
-                  .then((fileId) => {
-                    fs.unlink(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error) => {
-                      if (error) {
-                        console.error(`I cant delete source file: ${fileDefinition.pathFile}${fileDefinition.fileName}`);
-                      }
-                    });
-                    googleDrive.grantWriteSheetFilePermission(fileId)
-                      .then((linkFile) => {
-                        sendMail(linkFile)
-                          .then(() => console.log('success'))
-                          .catch(error => console.error(error));
-                      });
-                  });
-              });
-          });
-          db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, results[0].c_id)
-            .then(() => console.log('history updated'))
-            .catch(error => console.error(error));
-        })
-        .catch(error => console.error(error));
+      return Promise.all(promises);
     })
-    .catch(error => console.error(error));
 
+    .then((filesDefinition) => {
+      let promises = [];
+      filesDefinition.forEach((fileDefinition) => {
+        promises.push(uploadFile(fileDefinition));
+        fs.unlink(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error) => {
+          if (error) {
+            console.error(`I cant delete source file: ${fileDefinition.pathFile}${fileDefinition.fileName}`);
+          }
+        });
+      });
+      return Promise.all(promises);
+    })
+
+    .then((links) => {
+      let promises = [];
+      links.forEach((link) => {
+        console.log(link);
+        promises.push(sendMail(link))
+      });
+      return Promise.all(promises);
+    })
+
+    .then(() => {
+      return db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, idCustomer)
+    })
+
+    .then(() => console.log('history updated'))
+    .catch(error => console.error(error));
 }, null, true);
+
 
 /**
  * Zeroes counter in the database.

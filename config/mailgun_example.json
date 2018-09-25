@@ -1,0 +1,9 @@
+{
+  "API_KEY": "2342342342342342eweff3",
+  "DOMAIN": "some.com",
+  "API_base_URL": "https://api.mailgun.net/v3/some.com",
+  "SMTP_hostname":  "smtp.mailgun.org",
+  "SMTP_login": "some@some.com",
+  "TO": "some@gmail.com, some@mail.ru"
+
+}
