@@ -8,11 +8,12 @@ const sendMail = require('./Sender').sendMail;
 const fs = require('fs');
 
 /**
- * It's for a given period of time makes a query to the database,
- * makes a screen of three pages, saves in one pdf file,
- * deletes the original files, adds a digital signature to the file.
- * Uploads this file to Google Drive. Adds permissions "for all",
- * sends an email to a link to the file.
+ * Scrips for a given period of time makes a query to the database,
+ * 3 times follows the links and makes a screen of three pages and saves it in one pdf file.
+ * After that deletes the source files, adds a digital signature in the new file.
+ * Uploads this file to AWS S3 service with "read all" permission and
+ * sends an email with a link to the file.
+ * After that in database (table history) makes entry with last id of customer.
  */
 new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
   let idCustomer;

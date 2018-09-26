@@ -1,5 +1,16 @@
+## How it's works
+
+
+Scrips for a given period of time makes a query to the database,
+3 times follows the links and makes a screen of three pages and saves it in one pdf file.
+After that deletes the source files, adds a digital signature in the new file.
+Uploads this file to AWS S3 service with "read all" permission and
+sends an email with a link to the file.
+After that in database (table history) makes entry with last id of customer.
+
 
 ## Installation
+
 
 
 `https://github.com/alekssakovsky/pdf-digital-signature.git`
@@ -12,43 +23,56 @@
  * [phantomjs](https://www.npmjs.com/package/phantom)
  
    ` npm install -g phantomjs`
+   
+   _for this dependencies needs write **PATH**:_
+    
+        ...npm\node_modules\phantomjs\bin
+ 
  
  * [casperjs](https://www.npmjs.com/package/casperjs)
   
    `$ npm install -g casperjs`
+   
+   _for this dependencies needs write **PATH**:_
+   
+       ...npm\node_modules\casperjs\bin
 
+ 
  * [python](https://www.python.org/)
 
     https://www.python.org/downloads/
+    
+   _for this dependencies needs write **PATH**:_
+    
+       ...Python\Python...\
+    
     
  * [Java SE Runtime Environment](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
     
     https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
  
- _for this dependencies needs write **PATH**_
-    
- _Examples:_
-       
-     
-         ...npm\node_modules\phantomjs\bin
-    
-         ...npm\node_modules\casperjs\bin
+   _for this dependencies needs write **PATH**:_
          
-         ...Python\Python37-32\
-         
-         %JAVA_PATH%\bin
+       %JAVA_PATH%\bin
     
- _User value example:_
+   _User value:_
     
-         JAVA_HOME C:\Program Files\Java\jdk1.8.0_111
+       JAVA_HOME C:\Program Files\Java\jdk1.8.0_111
          
+         
+ * For works application you must also install [MySql](https://dev.mysql.com/):
  
- ## Configurations
-         
+   https://dev.mysql.com/downloads/mysql/
  
-For works application you must also install MySql and loads dump in `./DB model`
+   and loads dump:
+   
+       ./DB model/dump.sql
 
-You also need to fill out the configuration files:
+
+ ## Configurations
+
+      
+ You need to write in the configuration files right data:
 
    * `./config/db-data.json`:
    
@@ -74,11 +98,30 @@ You also need to fill out the configuration files:
          "bucketName": "my-bucket",
          "region": "us-east-1"
 
+ If you want to configure launch script for a specific time
+ you can write to `application.js` the value specified in the
+ `./config/cron.json`. 
 
-configs:
-cron
-email
-google credentials
-pdf
-paths
-sing
+   _Example:_
+   
+    new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
+ 
+or 
+   
+    new CronJob(CRON_CONFIG.EVERY_30_MINUTES, () => {
+
+or
+   
+    new CronJob(CRON_CONFIG.EVERY_4_DAYS, () => { 
+
+or
+
+    new CronJob(CRON_CONFIG.EVERY_1_WEEK, () => {
+
+
+
+
+
+
+
+
