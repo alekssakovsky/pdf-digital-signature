@@ -21,8 +21,8 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
     .then((results) => {
       idCustomer = results[0].c_id;
       let promises = [];
-      results.forEach((result) => {
-        promises.push(makePDF(result.v_site, result.customerN));
+      results.forEach((customers) => {
+        promises.push(makePDF(customer.v_site, customer.customerN));
       });
       return Promise.all(promises);
     })

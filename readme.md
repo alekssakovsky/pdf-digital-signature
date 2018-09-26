@@ -147,12 +147,4 @@ After that in database (table history) makes entry with last id of customer.
 
  Run script by command:
  
-    `node application.js`
-
-
-
-
-
-
-
-
+    `node application.js

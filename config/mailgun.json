@@ -1,9 +1,9 @@
 {
-  "API_KEY": "",
-  "DOMAIN": "",
+  "API_KEY": "2e90fe3e2f9d1aadcc773d0882c24adb-0e6e8cad-e845da62",
+  "DOMAIN": "open-corp.com",
   "API_base_URL": "",
   "SMTP_hostname":  "",
-  "SMTP_login": "",
-  "TO": ""
+  "SMTP_login": "postmaster@open-corp.com",
+  "TO": "skamath.oc@gmail.com"
 
 }
