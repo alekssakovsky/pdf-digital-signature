@@ -56,13 +56,3 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
     .then(() => console.log('history updated'))
     .catch(error => console.error(error));
 }, null, true);
-
-
-/**
- * Zeroes counter in the database.
- */
-function zeroingHistory() {
-  db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, 0)
-    .then(() => console.log('history updated'))
-    .catch(error => console.error(error));
-}
