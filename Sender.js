@@ -28,11 +28,11 @@ function sendMail(message) {
   return new Promise((resolve, reject) => {
     mailgun.messages().send(data, function (error) {
       if (error) {
-        const errorStr = `I can\'t send email: ${error}`;
+        const errorStr = `Can\'t send email: ${error}`;
         reject(errorStr);
       } else {
         resolve();
-        console.log(`Email was sent`);
+        console.info(`Send e-mail to: ${MAILGUN_CONFIG.TO}`);
       }
 
     });

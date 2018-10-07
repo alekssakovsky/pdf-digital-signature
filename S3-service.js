@@ -20,7 +20,7 @@ function uploadFile(fileDefinition) {
   return new Promise((resolve, reject) => {
   fs.readFile(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error, fileData) => {
     if (error) {
-      const errorStr = `I can\'t upload file on S3 Service: ${error}`;
+      const errorStr = `Can\'t upload file on S3 Service: ${error}`;
       reject(errorStr);
     }
       const param = {
@@ -32,10 +32,11 @@ function uploadFile(fileDefinition) {
       };
       s3.upload(param, (error, data) => {
         if (error) {
-          const errorStr = `I can\'t upload file on S3 Service: ${error}`;
+          const errorStr = `Can\'t upload file on S3 Service: ${error}`;
           reject(errorStr);
         }
         resolve(data.Location);
+        console.info(`Sent to Amazon S3. Link: ${data.Location}`);
       });
     });
   });

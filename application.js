@@ -18,10 +18,10 @@ const fs = require('fs');
 new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
   let idCustomer;
   db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
-    .then((results) => {
-      idCustomer = results[0].c_id;
+    .then((customers) => {
+      idCustomer = customers[0].c_id;
       let promises = [];
-      results.forEach((customers) => {
+      customers.forEach((customer) => {
         promises.push(makePDF(customer.v_site, customer.customerN));
       });
       return Promise.all(promises);
@@ -33,7 +33,7 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
         promises.push(uploadFile(fileDefinition));
         fs.unlink(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error) => {
           if (error) {
-            console.error(`I cant delete source file: ${fileDefinition.pathFile}${fileDefinition.fileName}`);
+            console.error(`Can't delete source file: ${fileDefinition.pathFile}${fileDefinition.fileName}`);
           }
         });
       });
@@ -43,7 +43,7 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
     .then((links) => {
       let promises = [];
       links.forEach((link) => {
-        console.log(link);
+        console.info('Sent to Amazon S3. Link: ', link);
         promises.push(sendMail(link))
       });
       return Promise.all(promises);
@@ -53,6 +53,6 @@ new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
       return db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, idCustomer)
     })
 
-    .then(() => console.log('history updated'))
+    .then(() => console.info('history updated'))
     .catch(error => console.error(error));
 }, null, true);

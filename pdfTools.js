@@ -23,24 +23,25 @@ const CONFIG = require('./config/PDF-sign');
 function mergePDFs(url, customer) {
   return new Promise((resolve, reject) => {
     const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
-    exec(cmd, (error, stdout, stderr) => {
+    console.info(`Go to link: ${url}${customer}`);
+      exec(cmd, (error, stdout, stderr) => {
       if (
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 1.pdf`) &&
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 2.pdf`) &&
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 3.pdf`)
       ) {
-        const errStr = `Warning! I can't merge PDF files:\n${stderr}\n${stderr}\n${stdout}`;
+        const errStr = `Warning! Can't merge PDF files:\n${stderr}\n${stderr}\n${stdout}`;
         reject(errStr);
       } else {
-        console.log('write PDF file is done');
         let files = [];
         for (let index = 1; index < 4; index++) {
           files.push(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} ${index}.pdf`);
         }
         const fileNameForSave = `${customer}.pdf`;
+        console.info(`Merge 3 pdf in one: ${customer}.pdf`);
         merge(files, `./${CONFIG.PATH_TO_TEMPS_PDFs}/${fileNameForSave}`, (error) => {
           if (error) {
-            const errorStr = `I can\'t merging files: ${error}`;
+            const errorStr = `Can\'t merging files: ${error}`;
             reject(errorStr);
           } else {
             resolve({
@@ -76,13 +77,13 @@ function checkFilesAndDirectories() {
     }
     if (!fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}`)) {
       fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}`, (error) => {
-        const errStr = `Warning! I can\'t create ${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}\n${error}`;
+        const errStr = `Warning! Can\'t create ${entryPoint}${CONFIG.PATH_TO_TEMPS_PDFs}\n${error}`;
         reject(errStr);
       });
     }
     if (!fs.existsSync(`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}`)) {
       fs.mkdir(`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}`, (error) => {
-        const errStr = `Warning! I can\'t create \`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}\n${error}`;
+        const errStr = `Warning! Can\'t create \`${entryPoint}${CONFIG.PATH_TO_SIGNED_PDF}\n${error}`;
         reject(errStr);
       });
     }
@@ -115,19 +116,19 @@ function signPDF(sourceFile) {
 
     exec(cmd, (error, stdout, stderr) => {
       if (fs.existsSync(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile.fileName}`)) {
-        console.log('signing PDF file is done');
+        console.info(`Sign pdf: ./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile.fileName}`);
         resolve({
           pathFile: `./${CONFIG.PATH_TO_SIGNED_PDF}/`,
           fileName: sourceFile.fileName
         });
         fs.unlink(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile.fileName}`, (error) => {
           if (error) {
-            console.error(`I cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile.fileName}`);
+            console.error(`Cant delete source file: ./${CONFIG.PATH_TO_TEMPS_PDFs}/${sourceFile.fileName}`);
           }
         });
       }
       else {
-        const errStr = `Warning! I can\'t sign PDF file:\n${stderr}\n${stderr}\n${stdout}`;
+        const errStr = `Warning! Can\'t sign PDF file:\n${stderr}\n${stderr}\n${stdout}`;
         reject(errStr);
       }
     });
@@ -155,7 +156,7 @@ function signPDF(sourceFile) {
 function makePDF(url, customer) {
   return new Promise((resolve, reject) => {
     checkFilesAndDirectories()
-      .catch((error) => reject(error))
+      .catch(error => reject(error))
       .then(() => {
         mergePDFs(url, customer)
           .then((savedFile) => {
