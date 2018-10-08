@@ -123,24 +123,11 @@ After that in database (table history) makes entry with last id of customer.
      "region": "us-east-1"
    
    4.4 If you want to configure launch script for a specific time
-       you can write to `application.js` the value specified in the
-       `./config/cron.json`. 
+       you should write to `cron.json` the value in minutes. 
 
    * example:
    
-    new CronJob(CRON_CONFIG.EVERY_MINUTE, () => {
- 
-   or 
-   
-    new CronJob(CRON_CONFIG.EVERY_30_MINUTES, () => {
-
-   or
-   
-    new CronJob(CRON_CONFIG.EVERY_4_DAYS, () => { 
-
-   or
-
-    new CronJob(CRON_CONFIG.EVERY_1_WEEK, () => {
+    "minutes": 1
     
     
 5. ##### Run Script:
