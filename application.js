@@ -15,7 +15,9 @@ const fs = require('fs');
  * sends an email with a link to the file.
  * After that in database (table history) makes entry with last id of customer.
  */
-new CronJob(`*/${CRON_CONFIG} * * * *`, () => {
+
+new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
+  console.log(new Date());
   let idCustomer;
   db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
     .then((customers) => {
