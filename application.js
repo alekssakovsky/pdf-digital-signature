@@ -17,7 +17,6 @@ const fs = require('fs');
  */
 
 new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
-  console.log(new Date());
   let idCustomer;
   db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
     .then((customers) => {
@@ -45,7 +44,6 @@ new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
     .then((links) => {
       let promises = [];
       links.forEach((link) => {
-        console.info('Sent to Amazon S3. Link: ', link);
         promises.push(sendMail(link))
       });
       return Promise.all(promises);
@@ -55,6 +53,8 @@ new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
       return db.dbConnect(db.UPDATE_IN_HISTORY_LAST_ID_CUSTOMER, idCustomer)
     })
 
-    .then(() => console.info('history updated'))
+    .then(() => {
+      console.info('history updated');
+    })
     .catch(error => console.error(error));
 }, null, true);

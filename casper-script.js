@@ -6,8 +6,8 @@ var casper = require('casper').create({
 casper.options.retryTimeout = 5000;
 
 
-var customer = require('utils').format(casper.cli.args[1]);
-var url = require('utils').format(casper.cli.args[0]) + customer;
+var customer = require('util').format(casper.cli.args[1]);
+var url = require('util').format(casper.cli.args[0]) + customer;
 
 casper.on('error', function (err) {
   this.log(err, 'error');
