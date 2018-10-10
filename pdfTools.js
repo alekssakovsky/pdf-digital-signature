@@ -23,6 +23,7 @@ const CONFIG = require('./config/PDF-sign');
 function mergePDFs(url, customer) {
   return new Promise((resolve, reject) => {
     // const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
+    // const cmd = `casperjs casper-script.js --customer="${customer}"`;
     const cmd = `casperjs casper-script.js --vendor="${url}" --customer="${customer}"`;
     console.info(`Go to link: ${url}${customer}`);
     exec(cmd, (error, stdout, stderr) => {

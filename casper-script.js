@@ -10,7 +10,8 @@ casper.options.retryTimeout = 5000;
 // var url = require('util').format(casper.cli.args[0]) + customer;
 
 var customer = casper.cli.get('customer');
-var vendor = casper.cli.get('vendor');
+// var vendor = casper.cli.get('vendor');
+var vendor = 'https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dinstant-video&field-keywords=';
 var url = vendor + customer;
 
 casper.on('error', function (err) {
