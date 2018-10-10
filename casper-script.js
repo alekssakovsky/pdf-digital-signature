@@ -1,13 +1,17 @@
 var casper = require('casper').create({
   verbose: true,
-  logLevel: 'info'
+  logLevel: 'warning'
 });
 
 casper.options.retryTimeout = 5000;
 
+//
+// var customer = require('util').format(casper.cli.args[1]);
+// var url = require('util').format(casper.cli.args[0]) + customer;
 
-var customer = require('util').format(casper.cli.args[1]);
-var url = require('util').format(casper.cli.args[0]) + customer;
+var customer = casper.cli.get('customer');
+var vendor = casper.cli.get('vendor');
+var url = vendor + customer;
 
 casper.on('error', function (err) {
   this.log(err, 'error');
@@ -25,6 +29,7 @@ casper.page.paperSize = {
 for (var index = 1; index < 4; index++) {
   function promiseCall(count) {
     casper.then(function () {
+      console.log('Creating pdf: ./temp/' + customer + ' ' + count + '.pdf');
       casper.capture('./temp/' + customer + ' ' + count + '.pdf');
     });
   }

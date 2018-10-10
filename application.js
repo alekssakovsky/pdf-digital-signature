@@ -4,7 +4,7 @@ const makePDF = require('./pdfTools').makePDF;
 const db = require('./Db');
 const CRON_CONFIG = require('./config/cron.json');
 const uploadFile = require('./S3-service').uploadFile;
-const sendMail = require('./Sender').sendMail;
+// const sendMail = require('./Sender').sendMail;
 const fs = require('fs');
 
 /**

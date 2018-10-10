@@ -22,9 +22,14 @@ const CONFIG = require('./config/PDF-sign');
  */
 function mergePDFs(url, customer) {
   return new Promise((resolve, reject) => {
-    const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
+    // const cmd = `casperjs casper-script.js "${url}" "${customer}"`;
+    const cmd = `casperjs casper-script.js --vendor="${url}" --customer="${customer}"`;
     console.info(`Go to link: ${url}${customer}`);
-      exec(cmd, (error, stdout, stderr) => {
+    exec(cmd, (error, stdout, stderr) => {
+      if (error || stderr) {
+        reject(error || stderr);
+      }
+      console.info(stdout);
       if (
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 1.pdf`) &&
         !fs.existsSync(`./${CONFIG.PATH_TO_TEMPS_PDFs}/${customer} 2.pdf`) &&
@@ -87,7 +92,7 @@ function checkFilesAndDirectories() {
         reject(errStr);
       });
     }
-      resolve();
+    resolve();
   });
 }
 
