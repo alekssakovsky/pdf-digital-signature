@@ -18,11 +18,11 @@ const s3 = new AWS.S3(AWS_CONFIG);
  */
 function uploadFile(fileDefinition) {
   return new Promise((resolve, reject) => {
-  fs.readFile(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error, fileData) => {
-    if (error) {
-      const errorStr = `Can\'t upload file on S3 Service: ${error}`;
-      reject(errorStr);
-    }
+    fs.readFile(`${fileDefinition.pathFile}${fileDefinition.fileName}`, (error, fileData) => {
+      if (error) {
+        const errorStr = `Can\'t upload file on S3 Service, file ${fileDefinition.pathFile}${fileDefinition.fileName} not found: ${error}`;
+        reject(errorStr);
+      }
       const param = {
         Bucket: AWS_CONFIG.bucketName,
         ACL: 'public-read',
@@ -31,12 +31,14 @@ function uploadFile(fileDefinition) {
         Body: fileData
       };
       s3.upload(param, (error, data) => {
-        if (error) {
+        if (error || data === undefined) {
           const errorStr = `Can\'t upload file on S3 Service: ${error}`;
           reject(errorStr);
+        } else {
+          resolve(data.Location);
+          console.info(`Sent to Amazon S3. Link: ${data.Location}`);
         }
-        resolve(data.Location);
-        console.info(`Sent to Amazon S3. Link: ${data.Location}`);
+
       });
     });
   });

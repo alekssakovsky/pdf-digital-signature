@@ -37,7 +37,7 @@ for (var index = 1; index < 4; index++) {
 
   promiseCall(index);
   casper.then(function () {
-    casper.evaluate(function() {
+    casper.evaluate(function () {
       document.querySelector('#pagnNextString', '0', '0').click();
     });
   });

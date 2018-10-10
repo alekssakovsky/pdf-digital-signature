@@ -121,8 +121,8 @@ function signPDF(sourceFile) {
     -t "${CONFIG.PATH_TO_TEMPS_PDFs}\\${sourceFile.fileName}" -o "${CONFIG.PATH_TO_SIGNED_PDF}\\${sourceFile.fileName}"`;
 
     exec(cmd, (error, stdout, stderr) => {
-      if (error || stderr) {
-        reject(error || stderr);
+      if (error) {
+        reject(error);
       }
       if (fs.existsSync(`./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile.fileName}`)) {
         console.info(`Sign pdf: ./${CONFIG.PATH_TO_SIGNED_PDF}/${sourceFile.fileName}`);

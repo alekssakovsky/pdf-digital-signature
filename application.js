@@ -4,8 +4,9 @@ const makePDF = require('./pdfTools').makePDF;
 const db = require('./Db');
 const CRON_CONFIG = require('./config/cron.json');
 const uploadFile = require('./S3-service').uploadFile;
-const sendMail = require('./Sender').sendMail;
+// const sendMail = require('./Sender').sendMail;
 const fs = require('fs');
+let flagStartScript = false;
 
 /**
  * Scrips for a given period of time makes a query to the database,
@@ -17,6 +18,12 @@ const fs = require('fs');
  */
 
 new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
+  if (flagStartScript) {
+    console.info('previous the script has not finished');
+    return;
+  }
+  flagStartScript = true;
+  console.info('\x1b[32m', 'script started\n', '\x1b[0m');
   let idCustomer;
   db.dbConnect(db.SELECT_CUSTOMERS_BY_HISTORY)
     .then((customers) => {
@@ -55,6 +62,14 @@ new CronJob(`*/${CRON_CONFIG.minutes} * * * *`, () => {
 
     .then(() => {
       console.info('history updated');
+      console.info('\x1b[34m', 'script finished\n', '\x1b[0m');
+      flagStartScript = false;
+
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      console.error(error);
+      console.info('\x1b[34m', 'script finished\n', '\x1b[0m');
+      flagStartScript = false;
+
+    });
 }, null, true);
